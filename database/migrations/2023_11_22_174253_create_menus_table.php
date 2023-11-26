@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('label');
             $table->text('icon')->nullable();
-            $table->string('route');
+            $table->string('route')->nullable();
             $table->string('type');
-            $table->integer('sequence')->nullable();
+            $table->integer('sequence')->default(0  );
 
             $table->unsignedBigInteger('parent_id')->nullable();
             $table
