@@ -49,7 +49,11 @@ const columns: TableColumn<Menu>[] = [
     key: 'route',
     isSortable: true,
     isSearchable: true
-  }
+  },
+  {
+    label: 'Sequence',
+    key: 'sequence'
+  },
 ]
 
 const handleEdit = (item: Menu) => {
@@ -79,6 +83,23 @@ const deleteMenu = () => {
         },
     });
 }
+
+const incrementSequence = (item: Menu) => {
+  console.log(item.sequence)
+    const form = useForm({
+      ...item,
+      sequence: --item.sequence,
+    })
+    form.put(route('menu.update', { menu: item }));
+};
+
+const decrementSequence = (item: Menu) => {
+    const form = useForm({
+      ...item,
+      sequence: ++item.sequence,
+    })
+    form.put(route('menu.update', { menu: item }));
+};
 </script>
 
 <template>
@@ -107,6 +128,16 @@ const deleteMenu = () => {
                     >
                         <template #icon="{ item }">
                             <span v-html="item.icon"></span>
+                        </template>
+                        <template #sequence="{ item }">
+                            <div class="flex gap-2">
+                              <button class="bg-gray-200 rounded-md px-1 pb-1 hover:bg-gray-400" @click="incrementSequence(item)">
+                                <i class="fa fa-chevron-up"></i>
+                              </button>
+                              <button class="bg-gray-200 rounded-md px-1 pb-1 hover:bg-gray-400" @click="decrementSequence(item)">
+                                <i class="fa fa-chevron-down"></i>
+                              </button>
+                            </div>
                         </template>
                     </DefaultTable>
                     <DefaultPagination v-if="data" :data="data"/>

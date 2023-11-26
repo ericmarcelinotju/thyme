@@ -46,18 +46,18 @@ const menus = usePage().props.menus
             class="flex-1 flex flex-col divide-y divide-grey-dark overflow-y-auto"
           >
             <div class="space-y-1">
+              <template v-for="menu in menus" :key="menu.id">
                 <Link
-                  v-for="menu in menus"
-                  :key="menu.id"
-                  class="flex px-6 py-3 mb-2 font-semibold hover:bg-indigo-400 hover:text-white"
+                  v-if="menu.type === 'link' && menu.route"
+                  class="flex px-6 py-3 hover:bg-indigo-400 hover:text-white"
                   :class="{'bg-indigo-300': route().current(menu.route)}"
                   :href="route(menu.route)"
                 >
-                    <span v-if="menu.icon" v-html="menu.icon"></span>
-                    <span class="ml-4">
-                      {{ menu.label }}
-                    </span>
+                    <span v-if="menu.icon" v-html="menu.icon" class="mr-4"></span>
+                    <span>{{ menu.label }}</span>
                 </Link>
+                <div v-else-if="menu.type === 'title'" class="px-6 pt-2 text-sm font-bold">{{ menu.label }}</div>
+              </template>
             </div>
           </nav>
       </div>

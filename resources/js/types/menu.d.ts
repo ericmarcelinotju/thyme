@@ -7,4 +7,5 @@ export interface Menu {
     icon: string;
     type: MenuType;
     route: string;
+    sequence: number;
 }

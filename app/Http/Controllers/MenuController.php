@@ -43,10 +43,12 @@ class MenuController extends Controller
     public function create()
     {
         $routeOptions = $this->getRouteOption();
+        $parentOptions = $this->getParentOption();
 
         return Inertia::render('Menu/CreateEdit', [
             'typeOptions' => $this->typeOption,
-            'routeOptions' => $routeOptions
+            'routeOptions' => $routeOptions,
+            'parentOptions' => $parentOptions
         ]);
     }
 
@@ -58,8 +60,8 @@ class MenuController extends Controller
         $request->validate([
             'name'  => 'required|string|max:255',
             'label' => 'required|string|max:255',
-            'type' => 'required',
-            'route' => 'required',
+            'type' => 'required|string|max:255',
+            'route' => 'max:255',
         ]);
 
         Menu::create([
@@ -89,11 +91,13 @@ class MenuController extends Controller
         $menu = Menu::find($id);
 
         $routeOptions = $this->getRouteOption();
+        $parentOptions = $this->getParentOption();
 
         return Inertia::render('Menu/CreateEdit', [
             'data' => $menu,
             'typeOptions' => $this->typeOption,
-            'routeOptions' => $routeOptions
+            'routeOptions' => $routeOptions,
+            'parentOptions' => $parentOptions
         ]);
     }
 
@@ -105,8 +109,8 @@ class MenuController extends Controller
         $request->validate([
             'name'  => 'required|string|max:255',
             'label' => 'required|string|max:255',
-            'type' => 'required',
-            'route' => 'required',
+            'type' => 'required|string|max:255',
+            'route' => 'max:255',
         ]);
 
         $menu = Menu::find($id);
@@ -116,6 +120,7 @@ class MenuController extends Controller
         $menu->type = $request->type;
         $menu->icon = $request->icon;
         $menu->route = $request->route;
+        $menu->sequence = $request->sequence;
 
         $menu->save();
 
@@ -132,6 +137,16 @@ class MenuController extends Controller
         $menu->delete();
 
         return Redirect::route('menu.index');
+    }
+
+    private function getParentOption()
+    {    
+      return collect(Menu::where('type', 'dropdown')->get())->map(function ($menu) {
+        return [
+          'label' => $menu->name,
+          'value' => $menu->id
+        ];
+      });
     }
 
     private function getRouteOption()

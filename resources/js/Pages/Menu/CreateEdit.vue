@@ -12,6 +12,7 @@ const props = defineProps<{
     data?: Menu
     typeOptions: Option[]
     routeOptions: Option[]
+    parentOptions: Option[]
 }>();
 
 const form = useForm({
@@ -21,6 +22,7 @@ const form = useForm({
     icon: props.data ? props.data.icon : '',
     type: props.data ? props.data.type : '',
     route: props.data ? props.data.route : '',
+    parent_id: props.data ? props.data.parent_id : -1,
 });
 
 const submitMenu = () => {
