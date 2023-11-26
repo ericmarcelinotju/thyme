@@ -2,7 +2,7 @@
   <div class="flex justify-between items-center mt-4">
     <div class="bg-white flex items-center justify-between">
       <div class="flex-1 flex justify-between sm:hidden">
-        <button
+        <a
           class="
             relative
             inline-flex
@@ -15,15 +15,14 @@
             text-gray-900
             bg-white
             hover:bg-gray-50
-            disabled:opacity-50 disabled:cursor-not-allowed
             rounded-l-md
           "
-          :disabled="!hasPrev"
-          @click.prevent="changePage(prevPage)"
+          :class="{'opacity-50 cursor-not-allowed': !data.prev_page_url}"
+          :href="data.prev_page_url"
         >
           prev
-        </button>
-        <button
+      </a>
+        <a
           class="
             relative
             inline-flex
@@ -36,14 +35,13 @@
             text-gray-900
             bg-white
             hover:bg-gray-50
-            disabled:opacity-50 disabled:cursor-not-allowed
             rounded-r-md
           "
-          :disabled="!hasNext"
-          @click.prevent="changePage(nextPage)"
+          :class="{'opacity-50 cursor-not-allowed': !data.next_page_url}"
+          :href="data.next_page_url"
         >
           next
-        </button>
+        </a>
       </div>
       <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
         <div>
@@ -51,7 +49,7 @@
             aria-label="Pagination"
             class="relative z-0 inline-flex shadow-sm -space-x-px"
           >
-            <button
+            <a
               class="
                 relative
                 inline-flex
@@ -64,17 +62,16 @@
                 font-medium
                 text-gray-500
                 hover:bg-gray-50
-                disabled:opacity-50 disabled:cursor-not-allowed
                 rounded-l-md
               "
-              :disabled="!hasPrev"
-              @click.prevent="changePage(prevPage)"
+              :class="{'opacity-50 cursor-not-allowed': !data.prev_page_url}"
+              :href="data.prev_page_url"
             >
               <span class="sr-only">
                 prev
               </span>
               <i class="fa fa-chevron-left"></i>
-            </button>
+            </a>
             <a
               v-if="hasFirst"
               class="
@@ -91,8 +88,7 @@
                 text-sm
                 font-medium
               "
-              href="#"
-              @click.prevent="changePage(1)"
+              :href="data.first_page_url"
             >
               1
             </a>
@@ -122,8 +118,7 @@
                 },
                 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-3 py-1 border text-sm font-medium',
               ]"
-              href="#"
-              @click.prevent="changePage(page)"
+              :href="`?page=${page}`"
             >
               {{ page }}
             </a>
@@ -160,12 +155,11 @@
                 text-sm
                 font-medium
               "
-              href="#"
-              @click.prevent="changePage(totalPages)"
+              :href="data.last_page_url"
             >
-              {{ totalPages }}
+              {{ data.last_page }}
             </a>
-            <button
+            <a
               class="
                 relative
                 inline-flex
@@ -178,17 +172,16 @@
                 font-medium
                 text-gray-500
                 hover:bg-gray-50
-                disabled:opacity-50 disabled:cursor-not-allowed
                 rounded-r-md
               "
-              :disabled="!hasNext"
-              @click.prevent="changePage(nextPage)"
+              :class="{'opacity-50 cursor-not-allowed': !data.next_page_url}"
+              :href="data.next_page_url"
             >
               <span class="sr-only">
                 next
               </span>
               <i class="fa fa-chevron-right"></i>
-            </button>
+            </a>
           </nav>
         </div>
         <div class="ml-4">
@@ -202,7 +195,7 @@
     </div>
     <select
       id="item-per-page"
-      v-model="pagination.limit"
+      v-model="perPage"
       autocomplete="item-per-page"
       class="
       focus:ring-sky-700 focus:border-sky-700
@@ -214,7 +207,7 @@
       rounded-md
       "
       name="item-per-page"
-      >
+    >
       <option
         v-for="option in paginationOptions"
         :key="option"
@@ -222,13 +215,15 @@
       >
         {{ option }}
       </option>
-      </select>
+    </select>
   </div>
 </template>
 
 <script setup lang="ts" generic="T">
-import { PaginationResponse } from '@/types/pagination.type';
 import { computed, ref } from 'vue'
+import { PaginationResponse } from '@/types/pagination';
+import { router } from '@inertiajs/vue3';
+import { watch } from 'vue';
 
 interface Props {
   data: PaginationResponse<T>
@@ -252,28 +247,17 @@ const rangeStart = computed(() => {
 })
 const rangeEnd = computed(() => {
   const end = props.data.current_page + pageRange
-  return (end < totalPages.value) ? end : totalPages.value
+  return (end < props.data.last_page) ? end : props.data.last_page
 })
 
-const totalPages = computed(() => Math.ceil(props.data.total / props.data.per_page))
-
-const nextPage = computed(() => props.data.current_page + 1)
-const prevPage = computed(() => props.data.current_page - 1)
-
 const hasFirst = computed(() => rangeStart.value !== 1)
-const hasLast = computed(() => rangeEnd.value < totalPages.value)
-const hasPrev = computed(() => props.data.current_page > 1)
-const hasNext = computed(() => props.data.current_page < totalPages.value)
+const hasLast = computed(() => rangeEnd.value < props.data.last_page)
 
-const changePage = (page: number) => {
-  if (page > 0 && page <= totalPages.value) {
-    emit('page-changed', page)
-  }
-}
-
-const paginationOptions = ref([10, 25, 50, 100, 500])
-const pagination = ref({
-  page: 1,
-  limit: paginationOptions.value[0]
+const paginationOptions = [10, 25, 50, 100, 500]
+const perPage = ref(props.data.per_page)
+watch(perPage, (val) => {
+  router.get(route('menu.index'), {
+    per_page: val
+  })
 })
 </script>

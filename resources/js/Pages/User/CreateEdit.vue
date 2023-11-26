@@ -5,17 +5,17 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { Menu } from '@/types/menu';
+import { User } from '@/types/user';
 import { Option } from '@/types/option';
 
 const props = defineProps<{
-    data?: Menu
+    data?: User
     typeOptions: Option[]
     routeOptions: Option[]
 }>();
 
 const form = useForm({
-    menu:  props.data ? props.data.id : undefined,
+    user:  props.data ? props.data.id : undefined,
     name: props.data ? props.data.name : '',
     label: props.data ? props.data.label : '',
     icon: props.data ? props.data.icon : '',
@@ -23,7 +23,7 @@ const form = useForm({
     route: props.data ? props.data.route : '',
 });
 
-const submitMenu = () => {
+const submitUser = () => {
     const submitOption = {
         preserveScroll: true,
         onSuccess: () => {
@@ -32,26 +32,26 @@ const submitMenu = () => {
         onError: () => {},
     }
     if (props.data) {
-        form.put(route('menu.update', { menu: form.menu }), submitOption);
+        form.put(route('user.update', { user: form.user }), submitOption);
     } else {
-        form.post(route('menu.store'), submitOption);
+        form.post(route('user.store'), submitOption);
     }
 };
 </script>
 
 <template>
-    <Head title="Menu" />
+    <Head title="User" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ props.data ? 'Update' : 'Create' }} Menu
+                {{ props.data ? 'Update' : 'Create' }} User
             </h2>
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <form @submit.prevent="submitMenu" class="space-y-6">
+                    <form @submit.prevent="submitUser" class="space-y-6">
                         <div>
                             <InputLabel for="name" value="Name" />
 
@@ -59,7 +59,7 @@ const submitMenu = () => {
                                 id="name"
                                 v-model="form.name"
                                 class="mt-1 block w-full"
-                                autocomplete="menu-name"
+                                autocomplete="user-name"
                             />
 
                             <InputError :message="form.errors.name" class="mt-2" />
@@ -72,7 +72,7 @@ const submitMenu = () => {
                                 id="label"
                                 v-model="form.label"
                                 class="mt-1 block w-full"
-                                autocomplete="menu-label"
+                                autocomplete="user-label"
                             />
 
                             <InputError :message="form.errors.label" class="mt-2" />
@@ -83,7 +83,7 @@ const submitMenu = () => {
 
                             <select
                                 v-model="form.type"
-                                autocomplete="menu-type"
+                                autocomplete="user-type"
                                 class="
                                 mt-1 block
                                 border-gray-300
@@ -92,7 +92,7 @@ const submitMenu = () => {
                                 shadow-sm
                                 w-full
                                 "
-                                name="menu-type"
+                                name="user-type"
                             >
                                 <option
                                     v-for="option in typeOptions"
@@ -122,7 +122,7 @@ const submitMenu = () => {
 
                             <select
                                 v-model="form.route"
-                                autocomplete="menu-route"
+                                autocomplete="user-route"
                                 class="
                                 mt-1 block
                                 border-gray-300
@@ -131,7 +131,7 @@ const submitMenu = () => {
                                 shadow-sm
                                 w-full
                                 "
-                                name="menu-route"
+                                name="user-route"
                             >
                                 <option
                                     v-for="option in routeOptions"

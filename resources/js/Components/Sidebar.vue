@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const isCollapse = ref(false);
 const onCollapse = () => {
     isCollapse.value = !isCollapse.value
 }
+
+const menus = usePage().props.menus
 </script>
 
 <template>
@@ -49,12 +47,15 @@ const onCollapse = () => {
           >
             <div class="space-y-1">
                 <Link
-                  class="block px-6 py-3 mb-2 font-semibold hover:bg-indigo-400 hover:text-white"
-                  :class="{'bg-indigo-300': route().current('dashboard')}"
-                  :href="route('dashboard')"
+                  v-for="menu in menus"
+                  :key="menu.id"
+                  class="flex px-6 py-3 mb-2 font-semibold hover:bg-indigo-400 hover:text-white"
+                  :class="{'bg-indigo-300': route().current(menu.route)}"
+                  :href="route(menu.route)"
                 >
+                    <span v-if="menu.icon" v-html="menu.icon"></span>
                     <span class="ml-4">
-                      Test
+                      {{ menu.label }}
                     </span>
                 </Link>
             </div>

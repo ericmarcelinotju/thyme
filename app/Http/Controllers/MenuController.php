@@ -5,18 +5,32 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Menu;
 use Inertia\Inertia;
-use Validator;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Route;
 
 class MenuController extends Controller
 {
+    private $typeOption = [
+        [
+            'label' => 'Link',
+            'value' => 'link'
+        ],
+        [
+            'label' => 'Title',
+            'value' => 'title'
+        ],
+        [
+            'label' => 'Dropdown',
+            'value' => 'dropdown'
+        ]
+    ];
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $menus = Menu::orderBy('sequence', 'asc')->paginate(10);
+        $perPage = $request->per_page ? $request->per_page : 10;
+        $menus = Menu::orderBy('sequence', 'asc')->paginate($perPage);
 
         return Inertia::render('Menu/Index', [
             'data' => $menus
@@ -28,7 +42,12 @@ class MenuController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Menu/CreateEdit');
+        $routeOptions = $this->getRouteOption();
+
+        return Inertia::render('Menu/CreateEdit', [
+            'typeOptions' => $this->typeOption,
+            'routeOptions' => $routeOptions
+        ]);
     }
 
     /**
@@ -37,14 +56,16 @@ class MenuController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'  => 'required',
-            'label' => 'required',
+            'name'  => 'required|string|max:255',
+            'label' => 'required|string|max:255',
+            'type' => 'required',
             'route' => 'required',
         ]);
 
         Menu::create([
             'name' => $request->name,
             'label' => $request->label,
+            'type' => $request->type,
             'icon' => $request->icon,
             'route' => $request->route,
         ]);
@@ -66,8 +87,13 @@ class MenuController extends Controller
     public function edit(string $id)
     {
         $menu = Menu::find($id);
+
+        $routeOptions = $this->getRouteOption();
+
         return Inertia::render('Menu/CreateEdit', [
-            'data' => $menu
+            'data' => $menu,
+            'typeOptions' => $this->typeOption,
+            'routeOptions' => $routeOptions
         ]);
     }
 
@@ -77,8 +103,9 @@ class MenuController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'name'  => 'required',
-            'label' => 'required',
+            'name'  => 'required|string|max:255',
+            'label' => 'required|string|max:255',
+            'type' => 'required',
             'route' => 'required',
         ]);
 
@@ -86,6 +113,7 @@ class MenuController extends Controller
 
         $menu->name = $request->name;
         $menu->label = $request->label;
+        $menu->type = $request->type;
         $menu->icon = $request->icon;
         $menu->route = $request->route;
 
@@ -104,5 +132,21 @@ class MenuController extends Controller
         $menu->delete();
 
         return Redirect::route('menu.index');
+    }
+
+    private function getRouteOption()
+    {
+        $routeCollection = Route::getRoutes();
+        return collect($routeCollection)
+            ->filter(function ($route) {
+                return in_array("GET", $route->methods()) && !empty($route->getName());
+            })
+            ->map(function ($route) {
+                return [
+                    'label' => $route->getName(),
+                    'value' => $route->getName(),
+                ];
+            })
+            ->toArray();
     }
 }

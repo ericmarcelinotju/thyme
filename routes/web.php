@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\AssetController;
+use App\Http\Controllers\BlockController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MenuController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -36,7 +40,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('menu', MenuController::class); 
+    Route::resource('menu', MenuController::class);
+    Route::resource('user', UserController::class);
+    Route::resource('role', RoleController::class);
+    Route::resource('page', PageController::class);
+    Route::resource('block', BlockController::class);
+    Route::resource('asset', AssetController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

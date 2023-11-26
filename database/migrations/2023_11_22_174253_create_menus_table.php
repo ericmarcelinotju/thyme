@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('label');
-            $table->string('icon')->nullable();
+            $table->text('icon')->nullable();
             $table->string('route');
             $table->string('type');
             $table->integer('sequence')->nullable();

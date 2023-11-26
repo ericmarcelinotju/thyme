@@ -1,5 +1,5 @@
 import { Ref } from 'vue'
-import { Option } from './option.type'
+import { Option } from './option'
 
 export class TableColumn<T> {
   label: string
