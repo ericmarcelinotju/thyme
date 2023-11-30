@@ -29,8 +29,7 @@ class MenuController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->per_page ? $request->per_page : 10;
-        $menus = Menu::orderBy('sequence', 'asc')->paginate($perPage);
+        $menus = Menu::with('children')->whereNull('parent_id')->orderBy('sequence', 'asc')->get();
 
         return Inertia::render('Menu/Index', [
             'data' => $menus
@@ -70,7 +69,8 @@ class MenuController extends Controller
             'type'     => $request->type,
             'icon'     => $request->icon,
             'route'    => $request->route,
-            'sequence' => $this->getNextSequence()
+            'sequence' => $this->getNextSequence(),
+            'parent_id'=> $request->parent_id
         ]);
 
         return Redirect::route('menu.index');
@@ -121,6 +121,7 @@ class MenuController extends Controller
         $menu->type = $request->type;
         $menu->icon = $request->icon;
         $menu->route = $request->route;
+        $menu->parent_id = $request->parent_id;
 
         $menu->save();
 

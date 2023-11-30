@@ -14,20 +14,16 @@ return new class extends Migration
         Schema::create('block_asset', function (Blueprint $table) {
             $table->id();
             $table->integer('sequence');
+            
+            $table->foreignId('asset_id')
+              ->constrained()
+              ->onDelete('cascade');
+            
+            $table->foreignId('block_id')
+              ->constrained()
+              ->onDelete('cascade');
+            
             $table->timestamps();
-            
-            
-            $table->unsignedBigInteger('asset_id');
-            $table
-                ->foreign('asset_id')
-                ->references('id')->on('assets')
-                ->onDelete('cascade');
-                
-            $table->unsignedBigInteger('block_id');
-            $table
-                ->foreign('block_id')
-                ->references('id')->on('blocks')
-                ->onDelete('cascade');
         });
     }
 

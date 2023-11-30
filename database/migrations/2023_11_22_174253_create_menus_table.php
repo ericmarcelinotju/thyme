@@ -20,10 +20,10 @@ return new class extends Migration
             $table->string('type');
             $table->integer('sequence')->default(0  );
 
-            $table->unsignedBigInteger('parent_id')->nullable();
             $table
-                ->foreign('parent_id')
-                ->references('id')->on('menus')
+                ->foreignId('parent_id')
+                ->nullable()
+                ->constrained(table: 'menus')
                 ->onDelete('cascade');
 
             $table->timestamps();

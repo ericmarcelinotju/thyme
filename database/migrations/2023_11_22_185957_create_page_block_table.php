@@ -16,16 +16,12 @@ return new class extends Migration
             $table->integer('sequence');
             $table->text('additional_data');
             
-            $table->unsignedBigInteger('page_id');
-            $table
-                ->foreign('page_id')
-                ->references('id')->on('pages')
+            $table->foreignId('page_id')
+                ->constrained()
                 ->onDelete('cascade');
 
-            $table->unsignedBigInteger('block_id');
-            $table
-                ->foreign('block_id')
-                ->references('id')->on('blocks')
+            $table->foreignId('block_id')
+                ->constrained()
                 ->onDelete('cascade');
 
             $table->timestamps();

@@ -34,6 +34,10 @@ const columns: TableColumn<User>[] = [
     isSortable: true,
     isSearchable: true
   },
+  {
+    label: 'Role',
+    key: 'role_id',
+  },
 ]
 
 const handleEdit = (item: User) => {
@@ -88,7 +92,11 @@ const deleteUser = () => {
                         :total="data.total"
                         @delete="handleDelete"
                         @edit="handleEdit"
-                    />
+                    >
+                      <template #role_id="{ item }">
+                        {{ item.role.name }}
+                      </template>
+                    </DefaultTable>
                     <DefaultPagination v-if="data" :data="data"/>
                 </div>
             </div>

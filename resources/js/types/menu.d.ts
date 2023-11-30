@@ -8,5 +8,6 @@ export interface Menu {
     type: MenuType;
     route: string;
     sequence: number;
-    parent_id: number;
+    parent_id?: number;
+    children?: Menu[]
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Inertia\Inertia;
@@ -18,10 +19,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->per_page ? $request->per_page : 10;
-        $users = User::paginate($perPage);
+        $users = User::with('role')->paginate($perPage);
 
         return Inertia::render('User/Index', [
-            'data' => $users
+            'data' => $users,
         ]);
     }
 
@@ -30,7 +31,10 @@ class UserController extends Controller
      */
     public function create()
     {
-        return Inertia::render('User/CreateEdit');
+        $roleOptions = $this->getRoleOption();
+        return Inertia::render('User/CreateEdit', [
+            'roleOptions' => $roleOptions
+        ]);
     }
 
     /**
@@ -42,12 +46,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role_id' => 'required'
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role_id' => $request->role_id
         ]);
 
         event(new Registered($user));
@@ -69,8 +75,12 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = User::find($id);
+
+        $roleOptions = $this->getRoleOption();
+
         return Inertia::render('User/CreateEdit', [
             'data' => $user,
+            'roleOptions' => $roleOptions
         ]);
     }
 
@@ -81,15 +91,19 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => 'required|string|lowercase|email|max:255:' . User::class,
+            'password' => ['confirmed', Rules\Password::defaults()],
+            'role_id' => 'required'
         ]);
 
         $user = User::find($id);
 
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = Hash::make($request->password);
+        if (isset($request->password)) {
+          $user->password = Hash::make($request->password);
+        }
+        $user->role_id = $request->role_id;
 
         $user->save();
 
@@ -106,5 +120,15 @@ class UserController extends Controller
         $user->delete();
 
         return Redirect::route('user.index');
+    }
+
+    private function getRoleOption()
+    {
+        return collect(Role::all())->map(function ($role) {
+            return [
+                'label' => $role->name,
+                'value' => $role->id
+            ];
+        });
     }
 }

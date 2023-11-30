@@ -22,7 +22,7 @@ const form = useForm({
     icon: props.data ? props.data.icon : '',
     type: props.data ? props.data.type : '',
     route: props.data ? props.data.route : '',
-    parent_id: props.data ? props.data.parent_id : -1,
+    parent_id: props.data ? props.data.parent_id : undefined,
 });
 
 const submitMenu = () => {

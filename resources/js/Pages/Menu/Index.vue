@@ -4,7 +4,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Modal from '@/Components/Modal.vue';
 import DefaultTable from '@/Components/Defaults/Table.vue';
-import DefaultPagination from '@/Components/Defaults/Pagination.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
@@ -13,7 +12,7 @@ import { PaginationResponse } from '@/types/pagination';
 import { TableColumn } from '@/types/table';
 
 defineProps<{
-    data?: PaginationResponse<Menu>;
+    data?: Menu[];
 }>();
 
 const columns: TableColumn<Menu>[] = [
@@ -115,11 +114,15 @@ const decrementSequence = (item: Menu) => {
                     <DefaultTable
                         v-if="data"
                         :columns="columns"
-                        :items="data.data"
-                        :total="data.total"
+                        :items="data"
+                        :total="data.length"
                         @delete="handleDelete"
                         @edit="handleEdit"
                     >
+                        <template #name="{ item }">
+                            <span v-if="item.parent_id">┕</span>
+                            {{ item.name }}
+                        </template>
                         <template #icon="{ item }">
                             <span v-html="item.icon"></span>
                         </template>
@@ -134,7 +137,6 @@ const decrementSequence = (item: Menu) => {
                             </div>
                         </template>
                     </DefaultTable>
-                    <DefaultPagination v-if="data" :data="data"/>
                 </div>
             </div>
         </div>

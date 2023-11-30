@@ -19,16 +19,16 @@ return new class extends Migration
             $table->json('extra_attributes')->nullable();
             $table->string('status')->default('pending');
 
-            $table->unsignedBigInteger('subscription_id');
-            $table
-                ->foreign('subscription_id')
-                ->references('id')->on('subscriptions')
+            $table->foreignId('subscription_id')
+                ->constrained()
                 ->onDelete('cascade');
 
-            $table
-                ->unique(['subscription_id', 'email']);
+            $table->unique(['subscription_id', 'email']);
 
-            $table->index(['subscription_id', 'subscribed_at', 'unsubscribed_at'], 'email_list_subscribed_index');
+            $table->index(
+              ['subscription_id', 'subscribed_at', 'unsubscribed_at'],
+              'email_list_subscribed_index'
+            );
 
             $table->timestamp('subscribed_at')->nullable();
             $table->timestamp('unsubscribed_at')->nullable();

@@ -7,9 +7,11 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { User } from '@/types/user';
 import { computed } from 'vue';
+import { Option } from '@/types/option';
 
 const props = defineProps<{
     data?: User
+    roleOptions: Option[]
 }>();
 
 const isUpdate = computed(() => !!props.data)
@@ -18,6 +20,7 @@ const form = useForm({
     user:  props.data ? props.data.id : undefined,
     name: props.data ? props.data.name : '',
     email: props.data ? props.data.email : '',
+    role_id: props.data ? props.data.role_id : -1,
     password: '',
     password_confirmation: '',
 });
@@ -75,6 +78,34 @@ const submitUser = () => {
                             />
 
                             <InputError :message="form.errors.email" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <InputLabel for="role" value="Role" />
+
+                            <select
+                                v-model="form.role_id"
+                                autocomplete="user-role"
+                                class="
+                                mt-1 block
+                                border-gray-300
+                                focus:border-indigo-500 focus:ring-indigo-500
+                                rounded-md
+                                shadow-sm
+                                w-full
+                                "
+                                name="user-role"
+                            >
+                                <option
+                                    v-for="option in roleOptions"
+                                    :key="option.value"
+                                    :value="option.value"
+                                >
+                                    {{ option.label }}
+                                </option>
+                            </select>
+
+                            <InputError :message="form.errors.role_id " class="mt-2" />
                         </div>
 
                         <div>
