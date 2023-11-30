@@ -6,10 +6,13 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { User } from '@/types/user';
+import { computed } from 'vue';
 
 const props = defineProps<{
     data?: User
 }>();
+
+const isUpdate = computed(() => !!props.data)
 
 const form = useForm({
     user:  props.data ? props.data.id : undefined,
@@ -82,7 +85,7 @@ const submitUser = () => {
                                 type="password"
                                 class="mt-1 block w-full"
                                 v-model="form.password"
-                                :required=""
+                                :required="!isUpdate"
                                 autocomplete="new-password"
                             />
 
@@ -97,7 +100,7 @@ const submitUser = () => {
                                 type="password"
                                 class="mt-1 block w-full"
                                 v-model="form.password_confirmation"
-                                required
+                                :required="!isUpdate"
                                 autocomplete="new-password"
                             />
 
