@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Content;
 
 use App\Models\Block;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class BlockController extends Controller

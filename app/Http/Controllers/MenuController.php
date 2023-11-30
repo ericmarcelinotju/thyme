@@ -65,11 +65,12 @@ class MenuController extends Controller
         ]);
 
         Menu::create([
-            'name' => $request->name,
-            'label' => $request->label,
-            'type' => $request->type,
-            'icon' => $request->icon,
-            'route' => $request->route,
+            'name'     => $request->name,
+            'label'    => $request->label,
+            'type'     => $request->type,
+            'icon'     => $request->icon,
+            'route'    => $request->route,
+            'sequence' => $this->getNextSequence()
         ]);
 
         return Redirect::route('menu.index');
@@ -120,7 +121,6 @@ class MenuController extends Controller
         $menu->type = $request->type;
         $menu->icon = $request->icon;
         $menu->route = $request->route;
-        $menu->sequence = $request->sequence;
 
         $menu->save();
 
@@ -139,14 +139,55 @@ class MenuController extends Controller
         return Redirect::route('menu.index');
     }
 
+    public function moveUp(string $id)
+    {
+        $element = Menu::where('id', '=', $id)->first();
+        $switchElement = Menu::where('sequence', '<', $element->sequence)
+            ->orderBy('sequence', 'desc')->first();
+        if (!empty($switchElement)) {
+            $temp = $element->sequence;
+            $element->sequence = $switchElement->sequence;
+            $switchElement->sequence = $temp;
+            $element->save();
+            $switchElement->save();
+        }
+        return Redirect::route('menu.index');
+    }
+
+    public function moveDown(string $id)
+    {
+        $element = Menu::where('id', '=', $id)->first();
+        $switchElement = Menu::where('sequence', '>', $element->sequence)
+            ->orderBy('sequence', 'asc')->first();
+        if (!empty($switchElement)) {
+            $temp = $element->sequence;
+            $element->sequence = $switchElement->sequence;
+            $switchElement->sequence = $temp;
+            $element->save();
+            $switchElement->save();
+        }
+        return Redirect::route('menu.index');
+    }
+
+    public function getNextSequence()
+    {
+        $result = Menu::select('sequence')->orderBy('sequence', 'desc')->first();
+        if (empty($result)) {
+            $result = 1;
+        } else {
+            $result = $result->sequence + 1;
+        }
+        return $result;
+    }
+
     private function getParentOption()
-    {    
-      return collect(Menu::where('type', 'dropdown')->get())->map(function ($menu) {
-        return [
-          'label' => $menu->name,
-          'value' => $menu->id
-        ];
-      });
+    {
+        return collect(Menu::where('type', 'dropdown')->get())->map(function ($menu) {
+            return [
+                'label' => $menu->name,
+                'value' => $menu->id
+            ];
+        });
     }
 
     private function getRouteOption()

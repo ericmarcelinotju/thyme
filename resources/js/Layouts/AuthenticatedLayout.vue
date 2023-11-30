@@ -53,8 +53,8 @@ const showingNavigationDropdown = ref(false);
 
                                             <template #content>
                                                 <DropdownLink :href="route('menu.index')">Menu</DropdownLink>
-                                                <DropdownLink :href="route('menu.index')">User</DropdownLink>
-                                                <DropdownLink :href="route('menu.index')">Role</DropdownLink>
+                                                <DropdownLink :href="route('user.index')">User</DropdownLink>
+                                                <DropdownLink :href="route('role.index')">Role</DropdownLink>
                                             </template>
                                         </Dropdown>
                                     </div>

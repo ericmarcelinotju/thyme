@@ -1,8 +1,4 @@
-export interface Menu {
+export interface Role {
     id: number;
     name: string;
-    label: string;
-    icon: string;
-    type: string;
-    route: string;
 }

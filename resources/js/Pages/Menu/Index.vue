@@ -86,19 +86,13 @@ const deleteMenu = () => {
 
 const incrementSequence = (item: Menu) => {
   console.log(item.sequence)
-    const form = useForm({
-      ...item,
-      sequence: --item.sequence,
-    })
-    form.put(route('menu.update', { menu: item }));
+    const form = useForm({ ...item })
+    form.put(route('menu.up', { id: item.id }));
 };
 
 const decrementSequence = (item: Menu) => {
-    const form = useForm({
-      ...item,
-      sequence: ++item.sequence,
-    })
-    form.put(route('menu.update', { menu: item }));
+    const form = useForm({ ...item })
+    form.put(route('menu.down', { id: item.id }));
 };
 </script>
 

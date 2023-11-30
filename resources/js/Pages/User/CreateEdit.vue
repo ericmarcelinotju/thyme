@@ -6,21 +6,17 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { User } from '@/types/user';
-import { Option } from '@/types/option';
 
 const props = defineProps<{
     data?: User
-    typeOptions: Option[]
-    routeOptions: Option[]
 }>();
 
 const form = useForm({
     user:  props.data ? props.data.id : undefined,
     name: props.data ? props.data.name : '',
-    label: props.data ? props.data.label : '',
-    icon: props.data ? props.data.icon : '',
-    type: props.data ? props.data.type : '',
-    route: props.data ? props.data.route : '',
+    email: props.data ? props.data.email : '',
+    password: '',
+    password_confirmation: '',
 });
 
 const submitUser = () => {
@@ -66,83 +62,44 @@ const submitUser = () => {
                         </div>
 
                         <div>
-                            <InputLabel for="label" value="Label" />
+                            <InputLabel for="email" value="Email" />
 
                             <TextInput
-                                id="label"
-                                v-model="form.label"
+                                id="email"
+                                v-model="form.email"
                                 class="mt-1 block w-full"
-                                autocomplete="user-label"
+                                autocomplete="user-email"
                             />
 
-                            <InputError :message="form.errors.label" class="mt-2" />
+                            <InputError :message="form.errors.email" class="mt-2" />
                         </div>
 
                         <div>
-                            <InputLabel for="type" value="Type" />
+                            <InputLabel for="password" value="Password" />
 
-                            <select
-                                v-model="form.type"
-                                autocomplete="user-type"
-                                class="
-                                mt-1 block
-                                border-gray-300
-                                focus:border-indigo-500 focus:ring-indigo-500
-                                rounded-md
-                                shadow-sm
-                                w-full
-                                "
-                                name="user-type"
-                            >
-                                <option
-                                    v-for="option in typeOptions"
-                                    :key="option.value"
-                                    :value="option.value"
-                                >
-                                    {{ option.label }}
-                                </option>
-                            </select>
-
-                            <InputError :message="form.errors.type " class="mt-2" />
-                        </div>
-
-                        <div>
-                            <InputLabel for="icon" value="Icon" />
-
-                            <textarea
-                                class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                v-model="form.icon"
+                            <TextInput
+                                id="password"
+                                type="password"
+                                class="mt-1 block w-full"
+                                v-model="form.password"
+                                autocomplete="new-password"
                             />
 
-                            <InputError :message="form.errors.icon" class="mt-2" />
+                            <InputError class="mt-2" :message="form.errors.password" />
                         </div>
 
                         <div>
-                            <InputLabel for="route" value="Route" />
+                            <InputLabel for="password_confirmation" value="Confirm Password" />
 
-                            <select
-                                v-model="form.route"
-                                autocomplete="user-route"
-                                class="
-                                mt-1 block
-                                border-gray-300
-                                focus:border-indigo-500 focus:ring-indigo-500
-                                rounded-md
-                                shadow-sm
-                                w-full
-                                "
-                                name="user-route"
-                            >
-                                <option
-                                    v-for="option in routeOptions"
-                                    :key="option.value"
-                                    :value="option.value"
-                                >
-                                    {{ option.label }}
-                                </option>
-                            </select>
+                            <TextInput
+                                id="password_confirmation"
+                                type="password"
+                                class="mt-1 block w-full"
+                                v-model="form.password_confirmation"
+                                autocomplete="new-password"
+                            />
 
-                            <InputError :message="form.errors.route" class="mt-2" />
+                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
                         </div>
 
                         <div class="flex items-center gap-4">

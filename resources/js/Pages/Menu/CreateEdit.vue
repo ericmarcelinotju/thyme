@@ -147,6 +147,34 @@ const submitMenu = () => {
                             <InputError :message="form.errors.route" class="mt-2" />
                         </div>
 
+                        <div>
+                            <InputLabel for="parent" value="Parent" />
+
+                            <select
+                                v-model="form.parent_id"
+                                autocomplete="menu-route"
+                                class="
+                                mt-1 block
+                                border-gray-300
+                                focus:border-indigo-500 focus:ring-indigo-500
+                                rounded-md
+                                shadow-sm
+                                w-full
+                                "
+                                name="menu-route"
+                            >
+                                <option
+                                    v-for="option in parentOptions"
+                                    :key="option.value"
+                                    :value="option.value"
+                                >
+                                    {{ option.label }}
+                                </option>
+                            </select>
+
+                            <InputError :message="form.errors.parent_id" class="mt-2" />
+                        </div>
+
                         <div class="flex items-center gap-4">
                             <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 

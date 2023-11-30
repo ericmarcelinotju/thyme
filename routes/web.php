@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\AssetController;
-use App\Http\Controllers\BlockController;
+use App\Http\Controllers\Content\AssetController;
+use App\Http\Controllers\Content\BlockController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\PageController;
+use App\Http\Controllers\Content\PageController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('menu', MenuController::class);
+    Route::put('/menu/move-up/{id}', [MenuController::class, 'moveUp'])->name('menu.up');
+    Route::put('/menu/move-down/{id}', [MenuController::class, 'moveDown'])->name('menu.down');
     Route::resource('user', UserController::class);
     Route::resource('role', RoleController::class);
     Route::resource('page', PageController::class);
