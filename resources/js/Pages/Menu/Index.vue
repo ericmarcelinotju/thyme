@@ -83,6 +83,10 @@ const deleteMenu = () => {
     });
 }
 
+const detailFunc = (item: Menu): boolean => {
+  return !!item.children && item.children.length > 0
+}
+
 const incrementSequence = (item: Menu) => {
   console.log(item.sequence)
     const form = useForm({ ...item })
@@ -116,13 +120,10 @@ const decrementSequence = (item: Menu) => {
                         :columns="columns"
                         :items="data"
                         :total="data.length"
+                        :detail-func="detailFunc"
                         @delete="handleDelete"
                         @edit="handleEdit"
                     >
-                        <template #name="{ item }">
-                            <span v-if="item.parent_id">┕</span>
-                            {{ item.name }}
-                        </template>
                         <template #icon="{ item }">
                             <span v-html="item.icon"></span>
                         </template>
@@ -135,6 +136,52 @@ const decrementSequence = (item: Menu) => {
                                 <i class="fa fa-chevron-down"></i>
                               </button>
                             </div>
+                        </template>
+                        <template #detail="{ item }">
+                          <template v-if="item.children && item.children.length > 0">
+                            <tr v-for="child in item.children" :key="child.id" class="even:bg-slate-100">
+                              <td></td>
+                              <td class="px-4 py-2 whitespace-nowrap text-sm text-grey-dark">
+                                {{ child.name }}
+                              </td>
+                              <td class="px-4 py-2 whitespace-nowrap text-sm text-grey-dark">
+                                {{ child.label }}
+                              </td>
+                              <td class="px-4 py-2 whitespace-nowrap text-sm text-grey-dark">
+                                {{ child.type }}
+                              </td>
+                              <td class="px-4 py-2 whitespace-nowrap text-sm text-grey-dark">
+                                <span v-html="child.icon"></span>
+                              </td>
+                              <td class="px-4 py-2 whitespace-nowrap text-sm text-grey-dark">
+                                {{ child.route }}
+                              </td>
+                              <td class="px-4 py-2 whitespace-nowrap text-sm text-grey-dark">
+                                <div class="flex gap-2">
+                                  <button class="bg-gray-200 rounded-md px-1 pb-1 hover:bg-gray-400" @click="incrementSequence(child)">
+                                    <i class="fa fa-chevron-up"></i>
+                                  </button>
+                                  <button class="bg-gray-200 rounded-md px-1 pb-1 hover:bg-gray-400" @click="decrementSequence(child)">
+                                    <i class="fa fa-chevron-down"></i>
+                                  </button>
+                                </div>
+                              </td>
+                              <td class="flex text-center">
+                                <a
+                                  class="cursor-pointer text-amber-700 p-2 hover:text-amber-900"
+                                  @click="handleEdit(child)"
+                                >
+                                  <i class="fa fa-pencil mr-1"></i>
+                                </a>
+                                <a
+                                  class="cursor-pointer text-rose-700 p-2 hover:text-rose-900"
+                                  @click="handleDelete(child)"
+                                >
+                                  <i class="fa fa-trash mr-1"></i>
+                                </a>
+                              </td>
+                            </tr>
+                          </template>
                         </template>
                     </DefaultTable>
                 </div>

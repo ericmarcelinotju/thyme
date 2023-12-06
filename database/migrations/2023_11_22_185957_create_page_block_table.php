@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('page_block', function (Blueprint $table) {
-            $table->id();
             $table->integer('sequence');
             $table->text('additional_data');
             
@@ -23,8 +22,6 @@ return new class extends Migration
             $table->foreignId('block_id')
                 ->constrained()
                 ->onDelete('cascade');
-
-            $table->timestamps();
         });
     }
 

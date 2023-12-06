@@ -72,7 +72,8 @@
               >
                 <td v-if="hasDetail">
                   <a
-                    class="cursor-pointer"
+                    v-if="detailFunc && detailFunc(item)"
+                    class="cursor-pointer ml-3"
                     @click="onToogleDetail(index, item)"
                   >
                     <i v-if="!isDetailOpens[index]" class="fa fa-chevron-down"></i>
@@ -122,14 +123,12 @@
                   </a>
                 </td>
               </tr>
-              <tr v-if="hasDetail && isDetailOpens[index]">
-                <td colspan="100%">
+              <template v-if="hasDetail && isDetailOpens[index]">
                   <slot
                     :item="item"
                     name="detail"
                   />
-                </td>
-              </tr>
+              </template>
             </template>
           </template>
           <template v-else>
@@ -141,7 +140,7 @@
                     Data is empty
                   </h3>
                   <p class="mt-1 text-sm text-gray-500">
-                    Test
+                    Either error has occured or there are no data
                   </p>
                 </div>
               </td>
@@ -167,6 +166,7 @@ interface Props {
   hasEdit?: boolean
   hasDelete?: boolean
   isClickable?: boolean
+  detailFunc?: (T) => boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

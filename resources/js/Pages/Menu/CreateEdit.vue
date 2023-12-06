@@ -7,12 +7,14 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { Menu } from '@/types/menu';
 import { Option } from '@/types/option';
+import { Role } from '@/types/role';
 
 const props = defineProps<{
     data?: Menu
     typeOptions: Option[]
     routeOptions: Option[]
     parentOptions: Option[]
+    roleOptions: Option[]
 }>();
 
 const form = useForm({
@@ -23,7 +25,12 @@ const form = useForm({
     type: props.data ? props.data.type : '',
     route: props.data ? props.data.route : '',
     parent_id: props.data ? props.data.parent_id : undefined,
+    roles: props.data ? props.data.roles?.map((role: Role) => role.id) : undefined
 });
+
+if (!form.roles) {
+  form.roles = []
+}
 
 const submitMenu = () => {
     const submitOption = {
@@ -78,6 +85,27 @@ const submitMenu = () => {
                             />
 
                             <InputError :message="form.errors.label" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <InputLabel for="roles" value="Role" />
+
+                            <div v-for="option in roleOptions" :key="option.value" class="flex items-center gap-3">
+                              <input
+                                  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                  type="checkbox"
+                                  :id="option.value"
+                                  :value="option.value"
+                                  v-model="form.roles"
+                              />
+                              <label
+                                class="capitalize"
+                                :for="option.value"
+                              >
+                                {{ option.label }}
+                              </label>
+                            </div>
+                            <InputError :message="form.errors.roles" class="mt-2" />
                         </div>
 
                         <div>

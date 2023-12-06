@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Menu;
+use App\Models\Role;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -43,11 +44,13 @@ class MenuController extends Controller
     {
         $routeOptions = $this->getRouteOption();
         $parentOptions = $this->getParentOption();
+        $roleOptions = $this->getRoleOption();
 
         return Inertia::render('Menu/CreateEdit', [
-            'typeOptions' => $this->typeOption,
-            'routeOptions' => $routeOptions,
-            'parentOptions' => $parentOptions
+            'typeOptions'   => $this->typeOption,
+            'routeOptions'  => $routeOptions,
+            'parentOptions' => $parentOptions,
+            'roleOptions'   => $roleOptions
         ]);
     }
 
@@ -59,11 +62,11 @@ class MenuController extends Controller
         $request->validate([
             'name'  => 'required|string|max:255',
             'label' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
+            'type'  => 'required|string|max:255',
             'route' => 'max:255',
         ]);
 
-        Menu::create([
+        $menu = Menu::create([
             'name'     => $request->name,
             'label'    => $request->label,
             'type'     => $request->type,
@@ -72,6 +75,10 @@ class MenuController extends Controller
             'sequence' => $this->getNextSequence(),
             'parent_id'=> $request->parent_id
         ]);
+
+        if (isset($request->roles)) {
+          $menu->roles()->sync($request->roles);
+        }
 
         return Redirect::route('menu.index');
     }
@@ -89,16 +96,18 @@ class MenuController extends Controller
      */
     public function edit(string $id)
     {
-        $menu = Menu::find($id);
+        $menu = Menu::with('roles')->find($id);
 
         $routeOptions = $this->getRouteOption();
         $parentOptions = $this->getParentOption();
+        $roleOptions = $this->getRoleOption();
 
         return Inertia::render('Menu/CreateEdit', [
-            'data' => $menu,
-            'typeOptions' => $this->typeOption,
-            'routeOptions' => $routeOptions,
-            'parentOptions' => $parentOptions
+            'data'          => $menu,
+            'typeOptions'   => $this->typeOption,
+            'routeOptions'  => $routeOptions,
+            'parentOptions' => $parentOptions,
+            'roleOptions'   => $roleOptions
         ]);
     }
 
@@ -110,7 +119,7 @@ class MenuController extends Controller
         $request->validate([
             'name'  => 'required|string|max:255',
             'label' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
+            'type'  => 'required|string|max:255',
             'route' => 'max:255',
         ]);
 
@@ -122,6 +131,10 @@ class MenuController extends Controller
         $menu->icon = $request->icon;
         $menu->route = $request->route;
         $menu->parent_id = $request->parent_id;
+
+        if (isset($request->roles)) {
+          $menu->roles()->sync($request->roles);
+        }
 
         $menu->save();
 
@@ -187,6 +200,16 @@ class MenuController extends Controller
             return [
                 'label' => $menu->name,
                 'value' => $menu->id
+            ];
+        });
+    }
+
+    private function getRoleOption()
+    {
+        return collect(Role::all())->map(function ($role) {
+            return [
+                'label' => $role->name,
+                'value' => $role->id
             ];
         });
     }

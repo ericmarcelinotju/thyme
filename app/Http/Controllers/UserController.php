@@ -89,12 +89,18 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255:' . User::class,
-            'password' => ['confirmed', Rules\Password::defaults()],
-            'role_id' => 'required'
-        ]);
+            'email' => 'required|string|lowercase|email|max:255',
+            'password' => 'confirmed',
+            'role_id' => 'required',
+        ];
+
+        if (isset($request->password)) {
+          $rules['password'] = ['confirmed', Rules\Password::defaults()];
+        }
+
+        $request->validate($rules);
 
         $user = User::find($id);
 

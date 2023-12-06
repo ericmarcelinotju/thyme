@@ -10,4 +10,5 @@ export interface Menu {
     sequence: number;
     parent_id?: number;
     children?: Menu[]
+    roles?: Role[]
 }

@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('block_asset', function (Blueprint $table) {
-            $table->id();
             $table->integer('sequence');
             
             $table->foreignId('asset_id')
@@ -22,8 +21,6 @@ return new class extends Migration
             $table->foreignId('block_id')
               ->constrained()
               ->onDelete('cascade');
-            
-            $table->timestamps();
         });
     }
 

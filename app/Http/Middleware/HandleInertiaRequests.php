@@ -31,11 +31,18 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $menus = Menu::with('children')->whereNull('parent_id')->orderBy('sequence', 'asc')->get();
+        $user = $request->user();
+        $menus = Menu::with('children')
+          ->whereHas('roles', function ($q) use ($user) {
+            $q->where('role_id', '=', $user->role_id);
+          })
+          ->whereNull('parent_id')
+          ->orderBy('sequence', 'asc')
+          ->get();
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
             'menus' => $menus,
             'ziggy' => fn () => [
