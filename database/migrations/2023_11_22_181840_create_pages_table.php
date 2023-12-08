@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('title');
-            $table->text('description');
-            $table->string('language');
-            $table->text('keywords');
+            $table->text('description')->nullable();
+            $table->text('keywords')->nullable();
 
             $table->timestamps();
         });
