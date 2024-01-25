@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('breads', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('table_name');
+            $table->json('columns');
+
+            $table->boolean('is_allow_browse');
+            $table->boolean('is_allow_read');
+            $table->boolean('is_allow_edit');
+            $table->boolean('is_allow_add');
+            $table->boolean('is_allow_delete');
+
             $table->timestamps();
         });
     }

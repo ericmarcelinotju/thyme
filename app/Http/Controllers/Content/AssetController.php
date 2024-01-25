@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Content;
 
 use App\Models\Asset;
-use App\Models\Asset;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;

@@ -1,6 +1,7 @@
 export class Option {
   label: string
   value: string
+  object?: any
 }
 
 export class OptionObject {

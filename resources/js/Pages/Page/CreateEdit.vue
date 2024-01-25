@@ -22,9 +22,8 @@ const form = useForm({
     name: props.data ? props.data.name : '',
     title: props.data ? props.data.title : '',
     description: props.data ? props.data.description : '',
-    language: props.data ? props.data.language : '',
     keywords: props.data ? props.data.keywords : '',
-    blocks: props.data ? props.data.block?.map((block: Block) => block.id) : undefined
+    blocks: props.data ? props.data.blocks?.map((block: Block) => block.id) : undefined
 });
 
 const submitPage = () => {
@@ -91,19 +90,6 @@ const submitPage = () => {
                             />
 
                             <InputError :message="form.errors.description" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <InputLabel for="language" value="Language" />
-
-                            <TextInput
-                                id="language"
-                                v-model="form.language"
-                                class="mt-1 block w-full"
-                                autocomplete="page-language"
-                            />
-
-                            <InputError :message="form.errors.language" class="mt-2" />
                         </div>
 
                         <div>
