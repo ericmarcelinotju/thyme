@@ -7,8 +7,11 @@ use App\Enums\FieldType;
 use App\Models\Bread;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class BreadController extends Controller
 {
@@ -31,9 +34,11 @@ class BreadController extends Controller
     public function create()
     {
         $fieldTypeOptions = $this->getFieldTypeOption();
+        $relationOptions = $this->getRelationOption();
 
         return Inertia::render('Bread/CreateEdit', [
-            'fieldTypeOptions'  => $fieldTypeOptions,
+            'fieldTypeOptions' => $fieldTypeOptions,
+            'relationOptions' => $relationOptions
         ]);
     }
 
@@ -48,16 +53,40 @@ class BreadController extends Controller
             'columns'  => 'required',
         ]);
 
-        $bread = Bread::create([
-            'name'              => $request->name,
-            'table_name'        => $request->table_name,
-            'is_allow_browse'   => $request->is_allow_browse,
-            'is_allow_read'     => $request->is_allow_read,
-            'is_allow_edit'     => $request->is_allow_edit,
-            'is_allow_add'      => $request->is_allow_add,
-            'is_allow_delete'   => $request->is_allow_delete,
-            'columns'           => json_encode($request->columns)
-        ]);
+        DB::beginTransaction();
+
+        try {
+          $bread = Bread::create([
+              'name'              => $request->name,
+              'table_name'        => $request->table_name,
+              'is_allow_browse'   => $request->is_allow_browse,
+              'is_allow_read'     => $request->is_allow_read,
+              'is_allow_edit'     => $request->is_allow_edit,
+              'is_allow_add'      => $request->is_allow_add,
+              'is_allow_delete'   => $request->is_allow_delete,
+              'columns'           => json_encode($request->columns)
+          ]);
+
+          Schema::create($request->table_name, function (Blueprint $table) use ($request) {
+            $table->id();
+            foreach ($request->columns as $column) {
+              if ($column['field_type'] == FieldType::RelationSelect || $column['field_type'] == FieldType::RelationRadio) {
+                $bread = Bread::find($column['relation_id']);
+                $table->foreignId($bread->table_name.'_id')
+                  ->constrained()
+                  ->onDelete('cascade');
+              } else {
+                $table->string($column['name']);
+              }
+            }
+            $table->timestamps();
+          });
+        } catch (Exception $e) {
+          DB::rollBack();
+          throw $e;
+        }
+
+        DB::commit();
 
         return Redirect::route('bread.index');
     }
@@ -78,10 +107,12 @@ class BreadController extends Controller
         $bread = Bread::find($id);
 
         $fieldTypeOptions = $this->getFieldTypeOption();
+        $relationOptions = $this->getRelationOption();
 
         return Inertia::render('Bread/CreateEdit', [
-            'data'              => $bread,
-            'fieldTypeOptions'  => $fieldTypeOptions
+            'data'             => $bread,
+            'fieldTypeOptions' => $fieldTypeOptions,
+            'relationOptions'  => $relationOptions
         ]);
     }
 

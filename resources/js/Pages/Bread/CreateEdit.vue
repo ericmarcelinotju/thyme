@@ -6,7 +6,6 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { Bread, Column } from '@/types/bread';
-import { computed } from 'vue';
 import { Option } from '@/types/option';
 
 const props = defineProps<{
@@ -46,8 +45,9 @@ const onAddColumn = () => {
   form.columns.push({} as Column)
 }
 
-const selectedRelation = (relId: string) => {
-  return props.relationOptions?.find(item => item.value === relId)?.object
+const selectedRelationColumns = (relId: string) => {
+  let columns = props.relationOptions?.find((item: Option) => item.value === relId)?.object?.columns
+  return columns ? JSON.parse(columns) : []
 }
 </script>
 
@@ -244,7 +244,7 @@ const selectedRelation = (relId: string) => {
                                 :id="`column-relation-column-${key}`"
                             >
                                 <option
-                                    v-for="option in selectedRelation(column.relation_id)"
+                                    v-for="option in selectedRelationColumns(column.relation_id)"
                                     :key="option.name"
                                     :value="option.name"
                                 >
