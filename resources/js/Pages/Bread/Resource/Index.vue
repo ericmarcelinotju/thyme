@@ -10,29 +10,37 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { PaginationResponse } from '@/types/pagination';
 import { TableColumn } from '@/types/table';
-import { Bread } from '@/types/bread';
+import { Bread, Resource } from '@/types/bread';
 
-defineProps<{
-    data?: PaginationResponse<Bread>;
+const props = defineProps<{
+    bread: Bread;
+    data?: PaginationResponse<Resource>;
 }>();
 
-const columns: TableColumn<Bread>[] = [
+console.log(props.bread)
+
+const columns: TableColumn<Resource>[] = [
   {
     label: 'ID',
     key: 'id',
     isHidden: true
-  },
-  {
-    label: 'Name',
-    key: 'name',
-    isSortable: true,
-    isSearchable: true
   }
 ]
 
-const handleEdit = (item: Bread) => {
+const initBreadColumns = () => {
+  console.log(props.bread.columns)
+  for (const column of props.bread.columns) {
+    columns.push({
+      label: column.name,
+      key: column.name
+    })
+  }
+}
+initBreadColumns()
+
+const handleEdit = (item: Resource) => {
     const form = useForm({})
-    form.get(route('bread.edit', { bread: item }))
+    form.get(route('bread.resource.edit', { bread: item }))
 }
 
 // Delete client
@@ -40,7 +48,7 @@ const confirmingBreadDeletion = ref(false)
 const deleteForm = useForm({
     bread: {}
 })
-const handleDelete = (data: Bread) => {
+const handleDelete = (data: Resource) => {
   confirmingBreadDeletion.value = true
   deleteForm.bread = data
 }
@@ -75,6 +83,7 @@ const deleteBread = () => {
                 </Link>
                 
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                    {{ columns }}
                     <DefaultTable
                         v-if="data"
                         :columns="columns"
@@ -82,16 +91,7 @@ const deleteBread = () => {
                         :total="data.total"
                         @delete="handleDelete"
                         @edit="handleEdit"
-                    >
-                      <template #action="{ item }">
-                        <Link
-                          class="cursor-pointer text-blue-600 p-2 hover:text-blue-900"
-                          :href="route('bread.resource.index', { bread: item })"
-                        >
-                          <i class="fa fa-eye"></i>
-                        </Link>
-                      </template>
-                    </DefaultTable>
+                    />
                     <DefaultPagination v-if="data" :data="data"/>
                 </div>
             </div>

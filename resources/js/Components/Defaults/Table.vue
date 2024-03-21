@@ -224,8 +224,8 @@ const getSortingComponent = (column: TableColumn<T>) => {
   return 'SwitchVerticalIcon'
 }
 
-const setSort = (column: TableColumn<T>, direction: SortDirection = 'asc') => {
-  if (column.isSortable) {
+const setSort = (column?: TableColumn<T>, direction: SortDirection = 'asc') => {
+  if (column && column.isSortable) {
     sort.value.by = column.key as string
     if (direction) {
       sort.value.direction = direction

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('table_name');
-            $table->json('columns');
+            $table->json('columns_json');
 
             $table->boolean('is_allow_browse');
             $table->boolean('is_allow_read');

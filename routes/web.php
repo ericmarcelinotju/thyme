@@ -5,7 +5,8 @@ use App\Http\Controllers\Content\BlockController;
 use App\Http\Controllers\Content\AssetController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\BreadController;
+use App\Http\Controllers\Bread\BreadController;
+use App\Http\Controllers\Bread\ResourceController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('user', UserController::class);
     Route::resource('role', RoleController::class);
     Route::resource('bread', BreadController::class);
+    Route::resource('bread.resource', ResourceController::class);
 
     Route::resource('page', PageController::class);
     Route::resource('block', BlockController::class);

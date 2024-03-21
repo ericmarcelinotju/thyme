@@ -12,4 +12,9 @@ class Bread extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function getColumnsAttribute()
+    {
+        return json_decode($this->columns_json);
+    }
 }

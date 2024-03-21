@@ -24,3 +24,7 @@ export interface Bread {
     is_allow_add: boolean;
     is_allow_delete: boolean;
 }
+
+export interface Resource {
+  id: number;
+}

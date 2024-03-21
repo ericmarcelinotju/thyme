@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Bread;
 
 use Illuminate\Http\Request;
 use App\Enums\FieldType;
 use App\Models\Bread;
+use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,18 +14,23 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-class BreadController extends Controller
+class ResourceController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(string $id, Request $request)
     {
-        $perPage = $request->per_page ? $request->per_page : 10;
-        $breads = Bread::paginate($perPage);
+        $bread = Bread::find($id);
 
-        return Inertia::render('Bread/Index', [
-            'data' => $breads
+        dd($bread->test);
+
+        $perPage = $request->per_page ? $request->per_page : 10;
+        $resources = DB::table($bread->table_name)->paginate($perPage);
+
+        return Inertia::render('Bread/Resource/Index', [
+            'bread' => $bread,
+            'data' => $resources
         ]);
     }
 
